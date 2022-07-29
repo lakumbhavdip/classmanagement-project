@@ -1,0 +1,399 @@
+#class management
+import databases
+from datetime import datetime
+import time
+
+
+MainModualChoice = 0
+db = databases.DBOperation("classmanagement",'root','')
+def Displaycourse():
+    sql="select*from course  where isdeleted=%s "
+    values=[0]
+    table=db.FetchRow(sql,values)
+    print('-'*100)
+    print(f"id{'':4}{'title ':33}{'fees':7}{'duration':12}{'description':11}")
+    print('-'*100)
+    for row in table:
+        print(f"{row['id']}{'':4}{row['title']:29}{'':5}{row['fees']:3}{row['duration']:10}{'':7}{row['description']:25}")
+        print('-'*100)
+        
+def Displaybatch():
+    sql="select*from batch  where isdeleted=%s "
+    values=[0]
+    table=db.FetchRow(sql,values)
+    print('-'*100)
+    print(f"{'id':6}  {'courseid':11} {'startdate':20} {'enddate':11}  {'classtime':4} ")
+    print('-'*100)
+    for row in table:
+        startdate = row['startdate'].strftime("%d-%m-%Y ")
+        enddate = row['enddate'].strftime("%d-%m-%Y")
+        classtime = row['classtime'].strftime("%H:%M:%S")
+
+        output = f"{row['id']} {'':6} {row['courseid']} {'':8} {startdate:18}  {enddate:14} {classtime:4} "
+        print(output)
+        
+def Displaysubject():
+    sql="select*from subject  where isdeleted=%s"
+    values=[0]
+    table=db.FetchRow(sql,values)
+    print('-'*100)
+    print(f"id{'':4}{'courseid '} {'':4} {'title':20} {'rate'}")
+    print('-'*100)
+    for row in table:
+        print(f"{row['id']}{'':4}{row['courseid']:6}{'':5}{row['title']:20}{row['rate']:10}")
+        print('-'*100)
+        
+def Displayteacher():
+    sql="select*from teacher  where isdeleted=%s"
+    values=[0]
+    table=db.FetchRow(sql,values)
+    print('-'*100)
+    print(f"id{'':4}{'name':12} {'mobile'} {'':5} {'gender':8} {'qulification':15}{'experience':6}")
+    print('-'*100)
+    for row in table:
+        print(f"{row['id']}{'':4}{row['name']:12}{row['mobile']} {'':5}{row['gender']} {'':7} {row['qulification']:10}{row['experience']:10}")
+        print('-'*100)
+        
+def Displaylecture():
+    sql="select*from lecture "
+    table=db.FetchRow(sql)
+    print('-'*100)
+    print(f"id{'':3}{'teacherid'}  {'subjectid'}  {'batchid'}  {'duration'}  {'amount'}  {'lecturedate':15}")
+    print('-'*100)
+    for row in table:
+        lecturedate = row['lecturedate'].strftime("%d-%m-%Y ")
+
+        output = f"{row['id']:1}{'':10}{row['teacherid']}{'':10}{row['subjectid']}{'':8}{row['batchid']}{'':6} {row['duration']} {'':4} {row['amount']} {'':3} {lecturedate:10}"
+        print(output)
+        print('-'*100)
+        
+def Displaypayout():  
+    start_date = input("Enter startdate (%d-%m-%Y): ")
+    end_date = input("Enter startdate (%d-%m-%Y): ")
+
+    print("-"*150)
+    start_date = datetime.strptime(start_date,"%d-%m-%Y")
+    end_date = datetime.strptime(end_date,"%d-%m-%Y")
+    print("-"*150)
+    print(f"{'name':15}")
+    print("-"*150)
+    sql="select name from lecture l,teacher t where teacherid=t.id and lecturedate>=%s and lecturedate<= %s"
+    values=[start_date,end_date]
+    table=db.FetchRow(sql,values)
+    for row in table:
+        print(f"{row['name']}")
+        print("-"*150)
+        
+def report1():  
+    start_date = input("Enter startdate (%d-%m-%Y): ")
+    end_date = input("Enter startdate (%d-%m-%Y): ")
+
+    print("-"*150)
+    start_date = datetime.strptime(start_date,"%d-%m-%Y")
+    end_date = datetime.strptime(end_date,"%d-%m-%Y")
+    print("-"*150)
+    print(f"id{'':3}{'teacherid'}  {'subjectid'}  {'batchid'}  {'duration'}  {'amount'}  {'lecturedate':15}")
+    sql="select * from lecture l,batch b where batchid=b.id and lecturedate>=%s and lecturedate<=%s"
+    values=[start_date,end_date]
+    table=db.FetchRow(sql,values)
+    print("-"*150)
+    for row in table:
+        # print(row)
+        lecturedate = row['lecturedate'].strftime("%d-%m-%Y ")
+        output = f"{row['id']:1}{'':10}{row['teacherid']}{'':10}{row['subjectid']}{'':8}{row['batchid']}{'':6} {row['duration']} {'':4} {row['amount']} {'':3} {lecturedate:10}"
+        print(output)    
+        print("-"*150)  
+        print("-"*150)  
+      
+        
+while True:
+    print("press 1 for course management: ")
+    print("press 2 for batch management: ")
+    print("press 3 for subject management: ")
+    print("press 4 for teacher management: ")
+    print("press 5 for lecture management: ")
+    print("press 6 for payout management: ")
+    print("press 7 for reports: ")
+    print("press 0 for exit: ")
+
+    MainModualChoice = int(input("Enter Your Choice: "))
+    if MainModualChoice==1:
+        while True:
+            print("Press 1 for insert course management data")
+            print("Press 2 for update course management data")
+            print("Press 3 for delete course management data")
+            print("Press 4 for view course management data")
+            print("Press 0 exit to main modual")
+            coursemanagement = int(input("Enter Your Choice: "))
+            if coursemanagement == 1:
+                print("-"*100)
+                  
+                title = input("Enter title of batch: ")
+                fees = int(input("Enter fees of batch: "))
+                duration = int(input("Enter duration in month of batch: "))
+                description = input("Enter description of batch: ")
+                values = [title,fees,duration,description]
+                sql = "insert into course (title,fees,duration,description) values (%s,%s,%s,%s)"
+                db.RunQuery(sql,values)
+
+                print("-"*100)
+
+            elif coursemanagement == 2:
+                Displaycourse()
+                id = int(input("Enter product id to update course: "))
+                title = input("Enter title of batch: ")
+                fees = int(input("Enter fees of batch: "))
+                duration = int(input("Enter duration in month of batch: "))
+                description = input("Enter description of batch: ")
+                sql = "update course set title=%s,fees=%s,duration=%s,description=%s where id=%s"
+                values = [title,fees,duration,description,id]
+                db.RunQuery(sql,values)
+                print("-"*100)
+            elif coursemanagement == 3:
+                print("-"*100)
+                Displaycourse()
+                id = int(input("Enter course id to delete course: "))
+                sql = "update course set isdeleted=%s where id=%s"
+                values = [1,id]
+                db.RunQuery(sql,values)
+                
+                print("-"*100)
+            elif coursemanagement == 4:
+                Displaycourse()
+            elif coursemanagement == 0:
+                break
+            else:
+                print("-"*100)
+                print("Invalide Choice")
+                print("-"*100)
+    elif MainModualChoice==2:
+        while True:
+            print("Press 1 for insert batch management data")
+            print("Press 2 for update batch management data")
+            print("Press 3 for delete batch management data")
+            print("Press 4 for view batch management data")
+            print("Press 0 exit to main modual")
+            batchmanagement = int(input("Enter Your Choice: "))
+            if batchmanagement == 1:
+                print("-"*100)
+                Displaycourse()
+                courseid = int(input("Enter courseid: "))
+                startdate = input("Enter statrdate of batch in format %Y-%m-%d: ")
+                enddate = input("Enter enddate of batch in format %Y-%m-%d: ")
+                classtime = input("Enter classtime of batch in format %H:%M%S: ")
+                values = [courseid,startdate,enddate,classtime]
+                sql = "insert into batch (courseid,startdate,enddate,classtime) values (%s,%s,%s,%s)"
+                db.RunQuery(sql,values)
+
+                print("-"*100)
+            elif batchmanagement == 2:
+
+                Displaybatch()
+                id = int(input("Enter product id to update course: "))
+                courseid = int(input("Enter courseid: "))
+                startdate = input("Enter statrdate of batch in format %Y-%m-%d: ")
+                enddate = input("Enter enddate of batch in format %Y-%m-%d: ")
+                classtime = input("Enter classtime of batch in format %H:%M:%S: ")
+                sql = "update batch set courseid=%s,startdate=%s,enddate=%s,classtime=%s where id=%s"
+                values = [id,courseid,startdate,enddate,classtime]
+                db.RunQuery(sql,values)
+                print("-"*100)
+
+            elif batchmanagement == 3:
+                
+                Displaybatch()
+                id = int(input("Enter batch id to delete batch: "))
+                sql = "update batch set isdeleted=%s where id=%s"
+                values = [1,id]
+                db.RunQuery(sql,values)
+                
+            elif batchmanagement == 4:
+                Displaybatch()
+            elif batchmanagement == 0:
+                break
+            else:
+                print("-"*100)
+                print("Invalide Choice")
+                print("-"*100)
+        
+    elif MainModualChoice==3:
+        while True:
+            print("Press 1 for insert subject management data")
+            print("Press 2 for update subject management data")
+            print("Press 3 for delete subject management data")
+            print("Press 4 for view subject management data")
+            print("Press 0 exit to subject modual")
+            subjectmanagement = int(input("Enter Your Choice: "))
+            if subjectmanagement == 1:
+                print("-"*100)
+                Displaycourse()
+                courseid = int(input("Enter courseid for subject: "))
+                title = input("Enter title of subject: ")
+                rate = int(input("Enter rate of subject: "))
+                values = [courseid,title,rate]
+                sql = "insert into subject (courseid,title,rate) values (%s,%s,%s)"
+                db.RunQuery(sql,values)            
+                print("-"*100)
+
+            elif subjectmanagement == 2:
+                Displaysubject()
+                id = int(input("Enter id subject:"))
+                courseid = int(input("Enter courseid for subject: "))
+                title = input("Enter title of subject: ")
+                rate = int(input("Enter rate of subject: "))
+                sql = "update subject set courseid=%s,title=%s,rate=%s where id=%s"
+                values = [courseid,title,rate,id]
+                db.RunQuery(sql,values)
+                print("-"*100)
+                
+            elif subjectmanagement == 3:
+                
+                print("-"*100)
+                Displaysubject()
+                id = int(input("Enter subject id to delete subject: "))
+                sql = "update subject set isdeleted=%s where id=%s"
+                values = [1,id]
+                db.RunQuery(sql,values)
+                print("-"*100)
+                
+            elif subjectmanagement == 4:
+                Displaysubject()
+            elif subjectmanagement == 0:
+                break
+            else:
+                print("-"*100)
+                print("Invalide Choice")
+                print("-"*100)
+    elif MainModualChoice==4:
+        while True:
+            print("Press 1 for insert teacher management data")
+            print("Press 2 for update teacher management data")
+            print("Press 3 for delete teacher management data")
+            print("Press 4 for view teacher management data")
+            print("Press 0 exit to teacher modual")
+            teachermanagement = int(input("Enter Your Choice: "))
+            if teachermanagement == 1:
+                print("-"*100)
+                name= input("Enter name of teacher: ")
+                mobile= int(input("Enter mobile no. of teacher: "))
+                email= input("Enter email address of teacher: ")
+                gender = int(input("press 1 for MALE or press 2 for FEMALE: "))
+                qulification = input("Enter qulification of teacher: ")
+                experience = int(input("Enter experience of teacher in month: "))
+                values = [name,mobile,email,gender,qulification,experience]
+                sql = "insert into teacher (name,mobile,email,gender,qulification,experience) values (%s,%s,%s,%s,%s,%s)"
+                db.RunQuery(sql,values)
+                print("-"*100)
+            elif teachermanagement == 2:
+                print("-"*100)
+                Displayteacher()
+                id = int(input("Enter id of teacher to update: "))
+                name= input("Enter name of teacher: ")
+                mobile= int(input("Enter mobile no. of teacher: "))
+                email= input("Enter email address of teacher: ")
+                gender = int(input("press 1 for MALE or press 2 for FEMALE: "))
+                qulification = input("Enter qulification of teacher: ")
+                experience = int(input("Enter experience of teacher in month: "))
+                sql = "update teacher set name=%s,mobile=%s,email=%s,gender=%s,qulification=%s,experience=%s where id=%s"
+                values = [name,mobile,email,gender,qulification,experience,id]
+                db.RunQuery(sql,values)
+                print("-"*100)
+            elif teachermanagement == 3:
+                print("-"*100)
+                Displayteacher()
+                id = int(input("Enter subject id to delete subject: "))
+                sql = "update teacher set isdeleted=%s where id=%s"
+                values = [1,id]
+                db.RunQuery(sql,values)
+                print("-"*100)
+                
+            elif teachermanagement == 4:
+                print("-"*100)
+                Displayteacher()
+                print("-"*100)
+            elif teachermanagement == 0:
+                break
+            else:
+                print("-"*100)
+                print("Invalide Choice")
+                print("-"*100)
+    elif MainModualChoice==5:
+        while True:
+            print("Press 1 for insert lecture management data")
+            print("Press 2 for view lecture management data")
+            print("Press 0 exit to lecture modual")
+            lecturemanagement = int(input("Enter Your Choice: "))
+            if lecturemanagement == 1:
+                
+                print("-"*100)
+                Displayteacher()        
+                Displaysubject()        
+                Displaybatch()        
+                teacherid= int(input("Enter teacher id: "))
+                subjectid= int(input("Enter subject id: "))
+                batchid= int(input("Enter batch id: "))
+                duration= int(input("Enter duration on minute: "))
+                amount= int(input("Enter amount of lecture: "))
+                lecturedate= input("Enter lecturedate: ")
+                values = [teacherid,subjectid,batchid,duration,amount,lecturedate]
+                sql = "insert into lecture (teacherid,subjectid,batchid,duration,amount,lecturedate) values (%s,%s,%s,%s,%s,%s)"
+                db.RunQuery(sql,values)
+                print("-"*100)
+                
+            elif lecturemanagement == 2:
+                print("-"*100)
+                Displaylecture()
+                print("-"*100)
+            elif lecturemanagement == 0:
+                break
+            else:
+                print("-"*100)
+                print("Invalide Choice")
+                print("-"*100)
+    elif MainModualChoice==6:
+        print("-"*100)
+        Displaypayout()
+        print("-"*100)
+    elif MainModualChoice==7:
+        print("-"*100)
+        print("Press 1 for generate batch wise lecture detail between given date ")
+        print("Press 2 for generate batch wise lecture detail with total amount")
+        print("Press 0 exit to lecture modual")
+        report = int(input("Enter Your Choice: "))
+        if report==1:
+            report1() 
+        elif report==2:
+            print("-"*125)
+            print(f"id{'':3}{'teacherid'}  {'subjectid'}  {'batchid'}  {'duration'}  {'amount'}  {'lecturedate':15}")
+            sql="select * from lecture l,batch b where batchid=b.id "
+            table=db.FetchRow(sql)
+            print("-"*125)
+            amount=0
+            for row in table:
+                # print(row)
+                lecturedate = row['lecturedate'].strftime("%d-%m-%Y ")
+                output = f"{row['id']:1}{'':10}{row['teacherid']}{'':10}{row['subjectid']}{'':8}{row['batchid']}{'':6} {row['duration']} {'':4} {row['amount']} {'':3} {lecturedate:10}"
+                print(output)   
+                amount =  row['amount']+amount
+
+                print("-"*125)  
+            print(f"Total amount of amount:= {'':21}" ,amount)
+            print("-"*125)    
+        elif report==0:
+            break
+        else:
+            print("-"*100)
+            print("Invalide Choice")
+            print("-"*100)
+
+        print("-"*100)
+    elif MainModualChoice==0:
+        time.sleep(1)
+        print("-"*100)
+        print("Good By...")
+        print("-"*100)
+        break
+    else:
+        print("-"*100)
+        print("Invalid Choice")
+        print("-"*100)
