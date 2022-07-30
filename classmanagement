@@ -1,7 +1,8 @@
 #class management
 import databases
-from datetime import datetime
-import time
+from datetime import time 
+from datetime import date 
+from datetime import datetime 
 
 
 MainModualChoice = 0
@@ -18,22 +19,26 @@ def Displaycourse():
         print('-'*100)
         
 def Displaybatch():
-    sql="select*from batch  where isdeleted=%s "
+    
+    sql="select * from batch  where  isdeleted =%s "
     values=[0]
     table=db.FetchRow(sql,values)
     print('-'*100)
     print(f"{'id':6}  {'courseid':11} {'startdate':20} {'enddate':11}  {'classtime':4} ")
     print('-'*100)
     for row in table:
+        
         startdate = row['startdate'].strftime("%d-%m-%Y ")
         enddate = row['enddate'].strftime("%d-%m-%Y")
-        classtime = row['classtime'].strftime("%H:%M:%S")
 
-        output = f"{row['id']} {'':6} {row['courseid']} {'':8} {startdate:18}  {enddate:14} {classtime:4} "
+        output = f"{row['id']} {'':6} {row['courseid']} {'':8} {startdate:18}  {enddate:14} {row['classtime']} "
         print(output)
+        print('-'*100)
+
+
         
 def Displaysubject():
-    sql="select*from subject  where isdeleted=%s"
+    sql="select * from subject  where isdeleted=%s"
     values=[0]
     table=db.FetchRow(sql,values)
     print('-'*100)
@@ -71,39 +76,39 @@ def Displaypayout():
     start_date = input("Enter startdate (%d-%m-%Y): ")
     end_date = input("Enter startdate (%d-%m-%Y): ")
 
-    print("-"*150)
+    print("-"*100)
     start_date = datetime.strptime(start_date,"%d-%m-%Y")
     end_date = datetime.strptime(end_date,"%d-%m-%Y")
-    print("-"*150)
+    print("-"*100)
     print(f"{'name':15}")
-    print("-"*150)
+    print("-"*100)
     sql="select name from lecture l,teacher t where teacherid=t.id and lecturedate>=%s and lecturedate<= %s"
     values=[start_date,end_date]
     table=db.FetchRow(sql,values)
     for row in table:
         print(f"{row['name']}")
-        print("-"*150)
+        print("-"*100)
         
 def report1():  
     start_date = input("Enter startdate (%d-%m-%Y): ")
     end_date = input("Enter startdate (%d-%m-%Y): ")
 
-    print("-"*150)
+    print("-"*100)
     start_date = datetime.strptime(start_date,"%d-%m-%Y")
     end_date = datetime.strptime(end_date,"%d-%m-%Y")
-    print("-"*150)
+    print("-"*100)
     print(f"id{'':3}{'teacherid'}  {'subjectid'}  {'batchid'}  {'duration'}  {'amount'}  {'lecturedate':15}")
     sql="select * from lecture l,batch b where batchid=b.id and lecturedate>=%s and lecturedate<=%s"
     values=[start_date,end_date]
     table=db.FetchRow(sql,values)
-    print("-"*150)
+    print("-"*100)
     for row in table:
         # print(row)
         lecturedate = row['lecturedate'].strftime("%d-%m-%Y ")
         output = f"{row['id']:1}{'':10}{row['teacherid']}{'':10}{row['subjectid']}{'':8}{row['batchid']}{'':6} {row['duration']} {'':4} {row['amount']} {'':3} {lecturedate:10}"
         print(output)    
-        print("-"*150)  
-        print("-"*150)  
+        print("-"*100)  
+        print("-"*100)  
       
         
 while True:
@@ -180,7 +185,12 @@ while True:
                 courseid = int(input("Enter courseid: "))
                 startdate = input("Enter statrdate of batch in format %Y-%m-%d: ")
                 enddate = input("Enter enddate of batch in format %Y-%m-%d: ")
-                classtime = input("Enter classtime of batch in format %H:%M%S: ")
+                print("Enter classtime of batch")
+                hour = int(input("Enter hour"))
+                minute = int(input("Enter minute"))
+                second = int(input("Enter seconds"))
+
+                classtime = time(hour,minute,second)
                 values = [courseid,startdate,enddate,classtime]
                 sql = "insert into batch (courseid,startdate,enddate,classtime) values (%s,%s,%s,%s)"
                 db.RunQuery(sql,values)
@@ -189,11 +199,15 @@ while True:
             elif batchmanagement == 2:
 
                 Displaybatch()
-                id = int(input("Enter product id to update course: "))
+                id = int(input("Enter batch id to update batch: "))
                 courseid = int(input("Enter courseid: "))
                 startdate = input("Enter statrdate of batch in format %Y-%m-%d: ")
                 enddate = input("Enter enddate of batch in format %Y-%m-%d: ")
-                classtime = input("Enter classtime of batch in format %H:%M:%S: ")
+                print("Enter classtime of batch")
+                hour = int(input("Enter hour"))
+                minute = int(input("Enter minute"))
+                second = int(input("Enter seconds"))
+                classtime = time(hour,minute,second)
                 sql = "update batch set courseid=%s,startdate=%s,enddate=%s,classtime=%s where id=%s"
                 values = [id,courseid,startdate,enddate,classtime]
                 db.RunQuery(sql,values)
@@ -355,40 +369,40 @@ while True:
         Displaypayout()
         print("-"*100)
     elif MainModualChoice==7:
-        print("-"*100)
-        print("Press 1 for generate batch wise lecture detail between given date ")
-        print("Press 2 for generate batch wise lecture detail with total amount")
-        print("Press 0 exit to lecture modual")
-        report = int(input("Enter Your Choice: "))
-        if report==1:
-            report1() 
-        elif report==2:
-            print("-"*125)
-            print(f"id{'':3}{'teacherid'}  {'subjectid'}  {'batchid'}  {'duration'}  {'amount'}  {'lecturedate':15}")
-            sql="select * from lecture l,batch b where batchid=b.id "
-            table=db.FetchRow(sql)
-            print("-"*125)
-            amount=0
-            for row in table:
-                # print(row)
-                lecturedate = row['lecturedate'].strftime("%d-%m-%Y ")
-                output = f"{row['id']:1}{'':10}{row['teacherid']}{'':10}{row['subjectid']}{'':8}{row['batchid']}{'':6} {row['duration']} {'':4} {row['amount']} {'':3} {lecturedate:10}"
-                print(output)   
-                amount =  row['amount']+amount
-
-                print("-"*125)  
-            print(f"Total amount of amount:= {'':21}" ,amount)
-            print("-"*125)    
-        elif report==0:
-            break
-        else:
+        while True:
             print("-"*100)
-            print("Invalide Choice")
-            print("-"*100)
+            print("Press 1 for batch wise lecture detail between given date ")
+            print("Press 2 for batch wise lecture detail with total amount")
+            print("Press 0 exit to lecture modual")
+            report = int(input("Enter Your Choice: "))
+            if report==1:
+                report1() 
+            elif report==2:
+                print("-"*125)
+                print(f"id{'':3}{'teacherid'}  {'subjectid'}  {'batchid'}  {'duration'}  {'amount'}  {'lecturedate':15}")
+                sql="select * from lecture l,batch b where batchid=b.id "
+                table=db.FetchRow(sql)
+                print("-"*125)
+                amount=0
+                for row in table:
+                    # print(row)
+                    lecturedate = row['lecturedate'].strftime("%d-%m-%Y ")
+                    output = f"{row['id']:1}{'':10}{row['teacherid']}{'':10}{row['subjectid']}{'':8}{row['batchid']}{'':6} {row['duration']} {'':4} {row['amount']} {'':3} {lecturedate:10}"
+                    print(output)   
+                    amount =  row['amount']+amount
 
-        print("-"*100)
+                    print("-"*125)  
+                print(f"Total amount of amount:= {'':21}" ,amount)
+                print("-"*125)    
+            elif report==0:
+                break
+            else:
+                print("-"*100)
+                print("Invalide Choice")
+                print("-"*100)
+
+            print("-"*100)
     elif MainModualChoice==0:
-        time.sleep(1)
         print("-"*100)
         print("Good By...")
         print("-"*100)
