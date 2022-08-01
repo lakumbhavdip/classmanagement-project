@@ -8,6 +8,9 @@ from datetime import datetime
 MainModualChoice = 0
 db = databases.DBOperation("classmanagement",'root','')
 def Displaycourse():
+    print('-'*125)
+    print("Course table")
+    print('-'*125)
     sql="select*from course  where isdeleted=%s "
     values=[0]
     table=db.FetchRow(sql,values)
@@ -19,7 +22,9 @@ def Displaycourse():
         print('-'*100)
         
 def Displaybatch():
-    
+    print('-'*125)
+    print("batch table")
+    print('-'*125)
     sql="select * from batch  where  isdeleted =%s "
     values=[0]
     table=db.FetchRow(sql,values)
@@ -38,6 +43,9 @@ def Displaybatch():
 
         
 def Displaysubject():
+    print('-'*125)
+    print("subject table")
+    print('-'*125)
     sql="select * from subject  where isdeleted=%s"
     values=[0]
     table=db.FetchRow(sql,values)
@@ -49,6 +57,9 @@ def Displaysubject():
         print('-'*100)
         
 def Displayteacher():
+    print('-'*125)
+    print("teacher table")
+    print('-'*125)
     sql="select*from teacher  where isdeleted=%s"
     values=[0]
     table=db.FetchRow(sql,values)
@@ -60,6 +71,9 @@ def Displayteacher():
         print('-'*100)
         
 def Displaylecture():
+    print('-'*125)
+    print("lecture table")
+    print('-'*125)
     sql="select*from lecture "
     table=db.FetchRow(sql)
     print('-'*100)
@@ -93,7 +107,6 @@ def report1():
     start_date = input("Enter startdate (%d-%m-%Y): ")
     end_date = input("Enter startdate (%d-%m-%Y): ")
 
-    print("-"*100)
     start_date = datetime.strptime(start_date,"%d-%m-%Y")
     end_date = datetime.strptime(end_date,"%d-%m-%Y")
     print("-"*100)
@@ -107,8 +120,6 @@ def report1():
         lecturedate = row['lecturedate'].strftime("%d-%m-%Y ")
         output = f"{row['id']:1}{'':10}{row['teacherid']}{'':10}{row['subjectid']}{'':8}{row['batchid']}{'':6} {row['duration']} {'':4} {row['amount']} {'':3} {lecturedate:10}"
         print(output)    
-        print("-"*100)  
-        print("-"*100)  
       
         
 while True:
@@ -117,7 +128,7 @@ while True:
     print("press 3 for subject management: ")
     print("press 4 for teacher management: ")
     print("press 5 for lecture management: ")
-    print("press 6 for payout management: ")
+    print("press 6 for payout management for specific teacher between given date: ")
     print("press 7 for reports: ")
     print("press 0 for exit: ")
 
@@ -352,6 +363,7 @@ while True:
                 duration= int(input("Enter duration on minute: "))
                 amount= int(input("Enter amount of lecture: "))
                 lecturedate= input("Enter lecturedate: ")
+                lecturedate = datetime.strptime(lecturedate,"%d-%m-%Y")
                 values = [teacherid,subjectid,batchid,duration,amount,lecturedate]
                 sql = "insert into lecture (teacherid,subjectid,batchid,duration,amount,lecturedate) values (%s,%s,%s,%s,%s,%s)"
                 db.RunQuery(sql,values)
@@ -396,7 +408,7 @@ while True:
 
                     print("-"*125)  
                 print(f"Total amount of amount:= {'':21}" ,amount)
-                print("-"*125)    
+
             elif report==0:
                 break
             else:
