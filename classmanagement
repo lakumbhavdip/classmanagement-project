@@ -183,14 +183,15 @@ while True:
                 print("-"*100)
                 Displaycourse()
                 courseid = int(input("Enter courseid: "))
-                startdate = input("Enter statrdate of batch in format %Y-%m-%d: ")
-                enddate = input("Enter enddate of batch in format %Y-%m-%d: ")
+                startdate = input("Enter statrdate of batch in format (%d-%m-%Y):")
+                enddate = input("Enter enddate of batch in format (%d-%m-%Y): ")
                 print("Enter classtime of batch")
                 hour = int(input("Enter hour"))
                 minute = int(input("Enter minute"))
                 second = int(input("Enter seconds"))
-
                 classtime = time(hour,minute,second)
+                startdate = datetime.strptime(startdate,"%d-%m-%Y")
+                enddate = datetime.strptime(enddate,"%d-%m-%Y")
                 values = [courseid,startdate,enddate,classtime]
                 sql = "insert into batch (courseid,startdate,enddate,classtime) values (%s,%s,%s,%s)"
                 db.RunQuery(sql,values)
@@ -201,13 +202,15 @@ while True:
                 Displaybatch()
                 id = int(input("Enter batch id to update batch: "))
                 courseid = int(input("Enter courseid: "))
-                startdate = input("Enter statrdate of batch in format %Y-%m-%d: ")
-                enddate = input("Enter enddate of batch in format %Y-%m-%d: ")
+                startdate = input("Enter statrdate of batch in format (%d-%m-%Y): ")
+                enddate = input("Enter enddate of batch in format (%d-%m-%Y): ")
                 print("Enter classtime of batch")
                 hour = int(input("Enter hour"))
                 minute = int(input("Enter minute"))
                 second = int(input("Enter seconds"))
                 classtime = time(hour,minute,second)
+                startdate = datetime.strptime(startdate,"%d-%m-%Y")
+                enddate = datetime.strptime(enddate,"%d-%m-%Y")
                 sql = "update batch set courseid=%s,startdate=%s,enddate=%s,classtime=%s where id=%s"
                 values = [courseid,startdate,enddate,classtime,id]
                 db.RunQuery(sql,values)
