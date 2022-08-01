@@ -209,7 +209,7 @@ while True:
                 second = int(input("Enter seconds"))
                 classtime = time(hour,minute,second)
                 sql = "update batch set courseid=%s,startdate=%s,enddate=%s,classtime=%s where id=%s"
-                values = [id,courseid,startdate,enddate,classtime]
+                values = [courseid,startdate,enddate,classtime,id]
                 db.RunQuery(sql,values)
                 print("-"*100)
 
