@@ -18,7 +18,7 @@ def Displaycourse():
     print(f"id{'':4}{'title ':33}{'fees':7}{'duration':12}{'description':11}")
     print('-'*100)
     for row in table:
-        print(f"{row['id']}{'':4}{row['title']:29}{'':5}{row['fees']:3}{row['duration']:10}{'':7}{row['description']:25}")
+        print(f"{row['courseid']}{'':4}{row['title']:29}{'':5}{row['fees']:3}{row['duration']:10}{'':7}{row['description']:25}")
         print('-'*100)
         
 def Displaybatch():
